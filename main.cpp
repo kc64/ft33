@@ -16,7 +16,7 @@
 #warning "Using verbose mode."
 #endif
 
-#define USB_TEST
+//#define USB_TEST
 #ifdef USB_TEST
 #warning "Using USB test mode."
 #endif
@@ -378,7 +378,7 @@ int main() {
     local_slave_data.mode(PullUp);
     local_slave_data.input();
 
-    int_ZCD.mode(PullUp); 
+    // int_ZCD.mode(PullUp); 
     
     dipswitch.mode(PullUp);
     dipswitch.input();
@@ -430,8 +430,8 @@ int main() {
             ptrSDSequence = (sSDStep *) ptrSDSequences[sequence];
             sequenceLength = SDSequenceLengths[sequence];
             
-            tkr_Timer.attach_us(&ZCD_SD, 8333);
-            //int_ZCD.rise(&ZCD_dim);
+            // tkr_Timer.attach_us(&ZCD_SD, 8333);
+            int_ZCD.rise(&ZCD_dim);
 
         }
         clocks = SLOWEST_TIME;
@@ -477,7 +477,8 @@ int main() {
             ptrSDSequence = (sSDStep *) ptrSDSequences[sequence];
             sequenceLength = SDSequenceLengths[sequence];
                                   
-            tkr_Timer.attach_us(&ZCD_SD_Slave, 8333);
+            // tkr_Timer.attach_us(&ZCD_SD_Slave, 8333);
+            int_ZCD.rise(&ZCD_dim);
         }
         clocks = SLOWEST_TIME;
         while(1) {
