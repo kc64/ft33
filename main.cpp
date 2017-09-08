@@ -11,7 +11,7 @@
 #warning "Using debug mode."
 #endif
 
-//#define VERBOSE 0
+// #define VERBOSE 0
 #ifdef VERBOSE
 #warning "Using verbose mode."
 #endif
@@ -45,7 +45,7 @@ exponetial curve that mimics the desired response. */
 #define C_COEFF -0.0207
 
 /* The potentiometer input port to select the speed of the sequence steps. */
-AnalogIn potentiometer(P0_15);
+AnalogIn potentiometer(P0_11);
 
 /* Setup the output pins. */
 DigitalOut C0(P0_16);
@@ -60,7 +60,7 @@ DigitalOut C7(P0_23);
 BusOut lights(P0_23, P0_19, P0_22, P0_18, P0_21, P0_17, P0_20, P0_16);
 
 /* Setup the dipswitch input port. */
-BusInOut dipswitch(P0_11, P0_12, P0_13, P0_14, P0_7, P0_8, P0_9, P0_10);
+BusInOut dipswitch(P1_23, P0_12, P0_13, P0_14, P0_7, P0_8, P0_9, P1_24);
 DigitalInOut master_slave(P0_4);
 DigitalInOut local_slave_data(P0_5);
 
@@ -357,16 +357,9 @@ void vfnSlaveRecieveData(void) {
     
 int main() {
 
-    while(1) {
-        C0 = 1;
-        wait(0.2);
-        C0 = 0;
-        wait(0.2);
-    }
-
     byte sequence;          /* The current sequence. */
-    // byte i;
-    // byte sd;
+    byte i;
+    byte sd;
 
     /* Basic initialization. */
     clocks = 0;
@@ -378,18 +371,17 @@ int main() {
     local_slave_data.mode(PullUp);
     local_slave_data.input();
 
-    // int_ZCD.mode(PullUp); 
+    int_ZCD.mode(PullUp); 
     
     dipswitch.mode(PullUp);
     dipswitch.input();
 
     lights.write(0xFF); /* all off */
-    
-    /* Wait for the XBEE radio to get ready. It takes a while. */
-    for(int i=0xFF; i>=0xF4; i--) {
-        wait(1.0);
-        lights = i;
-    }
+//    /* Wait for the XBEE radio to get ready. It takes a while. */
+//    for(i=0xFF; i>=0xF4; i--) {
+//        wait(1.0);
+//        lights = i;
+//    }
     
     sd_present.mode(PullUp);
     sd_present.input();
@@ -430,8 +422,8 @@ int main() {
             ptrSDSequence = (sSDStep *) ptrSDSequences[sequence];
             sequenceLength = SDSequenceLengths[sequence];
             
-            // tkr_Timer.attach_us(&ZCD_SD, 8333);
-            int_ZCD.rise(&ZCD_dim);
+            tkr_Timer.attach_us(&ZCD_SD, 8333);
+            //int_ZCD.rise(&ZCD_dim);
 
         }
         clocks = SLOWEST_TIME;
@@ -477,8 +469,7 @@ int main() {
             ptrSDSequence = (sSDStep *) ptrSDSequences[sequence];
             sequenceLength = SDSequenceLengths[sequence];
                                   
-            // tkr_Timer.attach_us(&ZCD_SD_Slave, 8333);
-            int_ZCD.rise(&ZCD_dim);
+            tkr_Timer.attach_us(&ZCD_SD_Slave, 8333);
         }
         clocks = SLOWEST_TIME;
         while(1) {
