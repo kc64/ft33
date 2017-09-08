@@ -39,7 +39,7 @@ VPATH = ..
 ###############################################################################
 # Project settings
 
-PROJECT := ft33-j161016
+PROJECT := ft33-k161110
 
 
 # Project settings
@@ -64,7 +64,6 @@ OBJECTS += mbed-src/common/FileBase.o
 OBJECTS += mbed-src/common/FileLike.o
 OBJECTS += mbed-src/common/FilePath.o
 OBJECTS += mbed-src/common/FileSystemLike.o
-OBJECTS += mbed-src/common/FunctionPointer.o
 OBJECTS += mbed-src/common/I2C.o
 OBJECTS += mbed-src/common/I2CSlave.o
 OBJECTS += mbed-src/common/InterruptIn.o
@@ -83,13 +82,14 @@ OBJECTS += mbed-src/common/TimerEvent.o
 OBJECTS += mbed-src/common/assert.o
 OBJECTS += mbed-src/common/board.o
 OBJECTS += mbed-src/common/error.o
-OBJECTS += mbed-src/common/exit.o
 OBJECTS += mbed-src/common/gpio.o
+OBJECTS += mbed-src/common/lp_ticker_api.o
 OBJECTS += mbed-src/common/mbed_interface.o
 OBJECTS += mbed-src/common/pinmap_common.o
 OBJECTS += mbed-src/common/retarget.o
 OBJECTS += mbed-src/common/rtc_time.o
 OBJECTS += mbed-src/common/semihost_api.o
+OBJECTS += mbed-src/common/ticker_api.o
 OBJECTS += mbed-src/common/us_ticker_api.o
 OBJECTS += mbed-src/common/wait_api.o
 OBJECTS += mbed-src/targets/cmsis/TARGET_NXP/TARGET_LPC11UXX/TOOLCHAIN_GCC_ARM/startup_LPC11xx.o
@@ -124,6 +124,7 @@ INCLUDE_PATHS += -I../mbed-src/targets/cmsis/TARGET_NXP
 INCLUDE_PATHS += -I../mbed-src/targets/cmsis/TARGET_NXP/TARGET_LPC11UXX
 INCLUDE_PATHS += -I../mbed-src/targets/cmsis/TARGET_NXP/TARGET_LPC11UXX/TOOLCHAIN_GCC_ARM
 INCLUDE_PATHS += -I../mbed-src/targets/cmsis/TARGET_NXP/TARGET_LPC11UXX/TOOLCHAIN_GCC_ARM/TARGET_LPC11U24_401
+INCLUDE_PATHS += -I../mbed-src/targets/cmsis/TOOLCHAIN_GCC
 INCLUDE_PATHS += -I../mbed-src/targets/hal
 INCLUDE_PATHS += -I../mbed-src/targets/hal/TARGET_NXP
 INCLUDE_PATHS += -I../mbed-src/targets/hal/TARGET_NXP/TARGET_LPC11UXX
@@ -158,6 +159,7 @@ C_FLAGS += -DTOOLCHAIN_object
 C_FLAGS += -D__CMSIS_RTOS
 C_FLAGS += -DTARGET_LPC11UXX
 C_FLAGS += -DTOOLCHAIN_GCC
+C_FLAGS += -DMBED_BUILD_TIMESTAMP=1504837327.41
 C_FLAGS += -DTARGET_CORTEX_M
 C_FLAGS += -DARM_MATH_CM0
 C_FLAGS += -DTARGET_UVISOR_UNSUPPORTED
@@ -171,7 +173,6 @@ C_FLAGS += -DDEVICE_PORTOUT=1
 C_FLAGS += -DDEVICE_STDIO_MESSAGES=1
 C_FLAGS += -DTARGET_LPC11U24_401
 C_FLAGS += -DTARGET_RELEASE
-C_FLAGS += -DMBED_BUILD_TIMESTAMP=1504835274.96
 C_FLAGS += -DDEVICE_PORTIN=1
 C_FLAGS += -DDEVICE_SLEEP=1
 C_FLAGS += -DTOOLCHAIN_GCC_ARM
@@ -202,6 +203,7 @@ CXX_FLAGS += -DTOOLCHAIN_object
 CXX_FLAGS += -D__CMSIS_RTOS
 CXX_FLAGS += -DTARGET_LPC11UXX
 CXX_FLAGS += -DTOOLCHAIN_GCC
+CXX_FLAGS += -DMBED_BUILD_TIMESTAMP=1504837327.41
 CXX_FLAGS += -DTARGET_CORTEX_M
 CXX_FLAGS += -DARM_MATH_CM0
 CXX_FLAGS += -DTARGET_UVISOR_UNSUPPORTED
@@ -215,7 +217,6 @@ CXX_FLAGS += -DDEVICE_PORTOUT=1
 CXX_FLAGS += -DDEVICE_STDIO_MESSAGES=1
 CXX_FLAGS += -DTARGET_LPC11U24_401
 CXX_FLAGS += -DTARGET_RELEASE
-CXX_FLAGS += -DMBED_BUILD_TIMESTAMP=1504835274.96
 CXX_FLAGS += -DDEVICE_PORTIN=1
 CXX_FLAGS += -DDEVICE_SLEEP=1
 CXX_FLAGS += -DTOOLCHAIN_GCC_ARM

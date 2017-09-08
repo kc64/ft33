@@ -11,12 +11,12 @@
 #warning "Using debug mode."
 #endif
 
-// #define VERBOSE 0
+//#define VERBOSE 0
 #ifdef VERBOSE
 #warning "Using verbose mode."
 #endif
 
-//#define USB_TEST
+#define USB_TEST
 #ifdef USB_TEST
 #warning "Using USB test mode."
 #endif
@@ -63,6 +63,9 @@ BusOut lights(P0_23, P0_19, P0_22, P0_18, P0_21, P0_17, P0_20, P0_16);
 BusInOut dipswitch(P0_11, P0_12, P0_13, P0_14, P0_7, P0_8, P0_9, P0_10);
 DigitalInOut master_slave(P0_4);
 DigitalInOut local_slave_data(P0_5);
+
+/* Setup the reset switch as an input to keep it from being a reset */
+DigitalInOut reset(P0_0);
 
 /* Setup the SD card detect input */
 DigitalInOut sd_present(P1_15);
@@ -194,7 +197,9 @@ void vfnLoadSequencesFromSD(void) {
     
     fp = fopen("/sd/seq.txt", "r");
     if(fp == NULL) {
-        pc.printf("No file\n");
+        pc.printf("No file. Restarting...\n");
+        // if the SD card is present but not responding, reset and try again
+        NVIC_SystemReset();
     } else {
         
         while(fgets(line, 100, fp) != NULL) {
@@ -352,9 +357,16 @@ void vfnSlaveRecieveData(void) {
     
 int main() {
 
+    while(1) {
+        C0 = 1;
+        wait(0.2);
+        C0 = 0;
+        wait(0.2);
+    }
+
     byte sequence;          /* The current sequence. */
-    byte i;
-    byte sd;
+    // byte i;
+    // byte sd;
 
     /* Basic initialization. */
     clocks = 0;
@@ -367,26 +379,20 @@ int main() {
     local_slave_data.input();
 
     int_ZCD.mode(PullUp); 
-
- //   int dimmer = 0xff;
- //   while(1) {
- //       dimmer = ~dimmer;
- //       lights = dimmer;
- //   }
     
     dipswitch.mode(PullUp);
     dipswitch.input();
 
-    lights.write(0xFF);
+    lights.write(0xFF); /* all off */
+    
     /* Wait for the XBEE radio to get ready. It takes a while. */
-    for(i=0; i<=12; i++) {
+    for(int i=0xFF; i>=0xF4; i--) {
         wait(1.0);
         lights = i;
     }
     
     sd_present.mode(PullUp);
     sd_present.input();
-    sd = !sd_present.read();
     
     wait(1.0);
 
@@ -398,7 +404,7 @@ int main() {
 
         pc.printf("\nMaster\n");
 
-        if (sd) {
+        if (!sd_present.read()) {
             #ifdef DEBUG
             pc.printf("\nSD found\n");
             #endif
@@ -448,12 +454,12 @@ int main() {
         pc.printf("Slave\n");
         vfnSlaveRecieveData();
         
-        if(local_slave_data.read() == 0) {
+        if(local_slave_data.read() == 1) {
             sequence = master_sequence;    
-            slave_channel = dipswitch.read();
-            if(slave_channel > 15) {
-                slave_channel = 15;
-            }
+            slave_channel = dipswitch.read() & 0x0F; // only use lower switch for slave ID
+            // if(slave_channel > 15) {
+            //     slave_channel = 15;
+            // }
             pc.printf("Use master data %d, %d\n", sequence, slave_channel);
         } else {
             /* Read the dipswitch */
